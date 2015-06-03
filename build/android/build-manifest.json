@@ -3,7 +3,7 @@
 	"deployType": "test",
 	"classname": "Notebook",
 	"platformPath": "C:\\ProgramData\\Titanium\\mobilesdk\\win32\\3.5.1.GA\\android",
-	"modulesHash": "1cc8c6bd223c43b00656551026cc9e5d",
+	"modulesHash": "238afb115a8c0cdc44bf7d65d7c0ebc5",
 	"modulesManifestHash": "03e6e93c4358bf35e3b9635db4bb47e2",
 	"modulesNativeHash": "32abaeeb3e7ea512de47d458278e4419",
 	"modulesBindingsHash": "fdf417bee9eff41a9beb37b2194705ab",
@@ -19,7 +19,7 @@
 	"guid": "4cc76e98-1855-4ace-9ccc-4e57b1b2d8c9",
 	"icon": "appicon.png",
 	"fullscreen": false,
-	"skipJSMinification": true,
+	"skipJSMinification": false,
 	"mergeCustomAndroidManifest": false,
 	"encryptJS": true,
 	"minSDK": 15,
@@ -28,5 +28,5 @@
 	"activitiesHash": "d41d8cd98f00b204e9800998ecf8427e",
 	"servicesHash": "d41d8cd98f00b204e9800998ecf8427e",
 	"jssFilesHash": "d41d8cd98f00b204e9800998ecf8427e",
-	"jarLibHash": "9b8f82da4b30b526b984471775adec8f"
+	"jarLibHash": "5aaff02abe5bf6fa89287be6f8964ba3"
 }

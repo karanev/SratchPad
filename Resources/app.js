@@ -1,28 +1,33 @@
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
-Titanium.UI.setBackgroundColor('#fff');
+Titanium.UI.setBackgroundColor("white");
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+var PENCILTHICKNESS = 10;
+var RUBBERTHICKNESS = 40;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Create the menu view on the left which has menu implemented as table
 var menuView = Ti.UI.createView({
-	backgroundColor: "white",
+	backgroundColor: "black",
 	width: Ti.UI.FILL,
 	height: Ti.UI.FILL
 	// url: "menuView.js"
 });
 
 menuData = [
-	{title:"Pencil", leftImage:"images/pencilTool.png", className:"menu"},
-	{title:"Eraser", leftImage:"images/eraserTool.png", className:"menu"},
-	{title:"New", leftImage:"images/newImage.png", className:"menu"},
-	{title:"Save", leftImage:"images/saveImage.png", className:"menu"},
+	{title:"Pencil", leftImage:"images/pencilToolSelected.png", textColor:"white", backgroundColor:"black", className:"menu"},
+	{title:"Eraser", leftImage:"images/eraserTool.png", textColor:"black", backgroundColor:"white", className:"menu"},
+	{title:"New", leftImage:"images/newImage.png", textColor:"black", backgroundColor:"white", className:"menu"},
+	{title:"Save", leftImage:"images/saveImage.png", textColor:"black", backgroundColor:"white", className:"menu"},
+	{title:"About Me", leftImage:"images/aboutMe.png", textColor:"black", backgroundColor:"white", className:"menu"}
 ];
 
 rowData = [];
 
-for (var i=0; i<4; i++){
+for (var i=0; i<menuData.length; i++){
 	var img = Ti.UI.createImageView({
-		image: menuData[i].leftImage,//earlier 18 top and no height
+		image: menuData[i].leftImage,
 		top: "15dp",
 		height: "72dp",
 		touchEnabled: false
@@ -32,12 +37,14 @@ for (var i=0; i<4; i++){
 		text: menuData[i].title,
 		font: {fontsize: 48},
 		bottom: "15dp",
-		color: "black",
+		color: menuData[i].textColor,
 		touchEnabled: false
 	});
 	
 	var row = Ti.UI.createTableViewRow({
 		height: "130dp",
+		backgroundColor: menuData[i].backgroundColor,
+		backgroundSelectedColor: "black",
 		className: menuData[i].className
 	});
 	
@@ -46,7 +53,7 @@ for (var i=0; i<4; i++){
 	row.add( Ti.UI.createView({
             height: 1,
             width: Ti.UI.FILL,
-            backgroundColor: "#000",
+            backgroundColor: "black",
             bottom: 0
     }) );
 	rowData.push(row);
@@ -55,6 +62,7 @@ for (var i=0; i<4; i++){
 var menuTable = Ti.UI.createTableView({
 	width: Ti.UI.FILL,
 	height: Ti.UI.FILL,
+	backgroundColor: "black",
 	data: rowData
 });
 
@@ -62,22 +70,59 @@ menuTable.addEventListener("click", function(e) {
 	switch (e.index) {
     	case 0: //Pencil
     	    paint.eraseMode = false;
-			paint.strokeWidth = 10;
+			paint.strokeWidth = PENCILTHICKNESS;
+			menuTable.data[0].rows[0].children[0].image = "images/pencilToolSelected.png";
+			menuTable.data[0].rows[0].backgroundColor = "black";
+			menuTable.data[0].rows[0].children[1].color = "white";
+			menuTable.data[0].rows[1].children[0].image = "images/eraserTool.png";
+			menuTable.data[0].rows[1].backgroundColor = "white";
+			menuTable.data[0].rows[1].children[1].color = "black";
 			selectedTool.image = "images/pencilTool.png";
-			thicknessSlider.value = 10;
     	    break;
     	case 1: //Eraser
      	    paint.eraseMode = true;
-			paint.strokeWidth = 40;
+			paint.strokeWidth = RUBBERTHICKNESS;
+			menuTable.data[0].rows[0].children[0].image = "images/pencilTool.png";
+			menuTable.data[0].rows[0].backgroundColor = "white";
+			menuTable.data[0].rows[0].children[1].color = "black";
+			menuTable.data[0].rows[1].children[0].image = "images/eraserToolSelected.png";
+			menuTable.data[0].rows[1].backgroundColor = "black";
+			menuTable.data[0].rows[1].children[1].color = "white";
 			selectedTool.image = "images/eraserTool.png";
-			thicknessSlider.value = 40;
      	    break;
    	 	case 2: //New
    	 		paint.clear();
     	    break;
    		case 3: //Save
-     	    Ti.API.info("It works");
+     	    var img = paint.toImage().media; 
+    		var filename = "image.png";
+    		var _storage = "";
+    		var osname = Ti.Platform.osname;
+    		
+    		if (osname == "android"){
+    			_storage = 'file:///storage/emulated/0/';
+    			var folder = Ti.Filesystem.getFile(_storage, 'Paint It');
+    		} else {
+    			var folder = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'Paint It');
+    		}
+			
+			if (!folder.exists()){
+    	 		folder.createDirectory();
+			}
+			var file = Titanium.Filesystem.getFile(folder.resolve(), filename);
+    		file.write(img);
+    		
+    		if (osname == "android"){
+    			Ti.Media.Android.scanMediaFiles([file.nativePath], ["image/png"]);
+    		} else {
+    			// also Ti.Media.saveToPhotoGallery(file) might work, haven't tested
+    			var imageForGallery = Ti.FileSystem.getFile(Ti.Filesystem.applicationDataDirectory + filename);
+    			Ti.Media.saveToPhotoGallery(imageForGallery);
+    		}
+    		
      	    break;
+     	case 4:
+     		alert("Created by Hashtag (Karan)");
 	}
 });
 
@@ -101,53 +146,72 @@ var paint = Paint.createPaintView({
 	top: 0,
 	width: "100%",
 	height: "100%",
+	backgroundColor: "white",
 	strokeColor: "#000",
 	strokeAlpha: 255,
-	strokeWidth: 10,
+	strokeWidth: PENCILTHICKNESS,
 	eraseMode: false
 });
 
 var selectedTool = Ti.UI.createImageView({
 	image: "images/pencilTool.png",
-	width: "40dp", height: "40dp",
+	width: "50dp", height: "50dp",
 	top: "15dp", right: "15dp"
 });
-selectedTool.addEventListener("click", function(e) {
-	if (thicknessSlider.visible) {
-		thicknessSlider.hide();
-		var matrix = Ti.UI.create2DMatrix();
-    	matrix = matrix.rotate(360, 0);
-    	var a = Ti.UI.createAnimation({
-        	transform : matrix,
-        	duration : 500
-    	});
-    	selectedTool.animate(a);
-	} else {
-		thicknessSlider.show();
-		var matrix = Ti.UI.create2DMatrix();
+var animateSelectedTool = function( turn ) {
+	var matrix = Ti.UI.create2DMatrix();
+	if (turn == "clockwise") {
     	matrix = matrix.rotate(0, 360);
-    	var a = Ti.UI.createAnimation({
-        	transform : matrix,
-        	duration : 500
-    	});
-    	selectedTool.animate(a);
+    } else {
+    	matrix = matrix.rotate(360, 0);
+    } 
+    var a = Ti.UI.createAnimation({
+    	transform : matrix,
+        duration : 500
+    });
+    selectedTool.animate(a);
+};
+selectedTool.addEventListener("click", function(e) {
+	if (thicknessSliderPencil.visible || thicknessSliderRubber.visible) {
+		thicknessSliderPencil.hide();
+		thicknessSliderRubber.hide();
+		animateSelectedTool("anticlockwise");
+	} else if (paint.eraseMode == false) {
+		thicknessSliderPencil.show();
+		animateSelectedTool("clockwise");
+	} else {
+		thicknessSliderRubber.show();
+		animateSelectedTool("clockwise");
 	}
 });
 
 var t = Titanium.UI.create2DMatrix();
 t = t.rotate(-90);
-thicknessSlider = Titanium.UI.createSlider({
+thicknessSliderRubber = Titanium.UI.createSlider({
 	min: 0,
-    max: 80,
-    value: 10,
+    max: 100,
+    value: RUBBERTHICKNESS,
     width: "150dp",
     height: Ti.UI.SIZE,
-    top: "110dp", right: "-37dp",
+    top: "120dp", right: "-39dp",
     transform: t,
     visible: false
 });
-thicknessSlider.addEventListener("change", function(e) {
-	paint.strokeWidth = e.value;
+thicknessSliderPencil = Titanium.UI.createSlider({
+	min: 0,
+    max: 50,
+    value: PENCILTHICKNESS,
+    width: "150dp",
+    height: Ti.UI.SIZE,
+    top: "120dp", right: "-39dp",
+    transform: t,
+    visible: false
+});
+thicknessSliderRubber.addEventListener("change", function(e) {
+	paint.strokeWidth = RUBBERTHICKNESS = e.value;
+});
+thicknessSliderPencil.addEventListener("change", function(e) {
+	paint.strokeWidth = PENCILTHICKNESS = e.value;
 });
 
 var openMenu = Ti.UI.createImageView({
@@ -162,27 +226,28 @@ openMenu.addEventListener("click", function(e){
 // Add PaintView to our centerView i.e. paintView
 paintView.add(paint);
 paintView.add(selectedTool); //adding after all so as to make it visible
-paintView.add(thicknessSlider);
+paintView.add(thicknessSliderRubber);
+paintView.add(thicknessSliderPencil);
 paintView.add(openMenu);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // CREATE THE MODULE
-var NappDrawerModule = require('dk.napp.drawer');
+var NappDrawer = require('dk.napp.drawer');
 
-var drawer = NappDrawerModule.createDrawer({
+var drawer = NappDrawer.createDrawer({
 	backgroundColor: "white",
-	fullscreen:false,
-	navBarHidden:true,
+	fullscreen: false,
+	navBarHidden: true,
 	leftWindow: menuView,
 	centerWindow: paintView,
 	fading: 0.2, // 0-1
 	parallaxAmount: 0.3, //0-1
 	shadowWidth:"30dp",
 	leftDrawerWidth: "130dp",
-	animationMode: NappDrawerModule.ANIMATION_NONE,
-	closeDrawerGestureMode: NappDrawerModule.CLOSE_MODE_MARGIN,
-	openDrawerGestureMode: NappDrawerModule.OPEN_MODE_NONE,
+	animationMode: NappDrawer.ANIMATION_NONE,
+	closeDrawerGestureMode: NappDrawer.CLOSE_MODE_MARGIN,
+	openDrawerGestureMode: NappDrawer.OPEN_MODE_NONE,
 	orientationModes: [Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT]
 });
 
