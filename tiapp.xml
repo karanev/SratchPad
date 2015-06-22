@@ -55,8 +55,8 @@
     </mobileweb>
     <modules>
         <module platform="android" version="2.0.2">ti.paint</module>
-        <module platform="android" version="1.1.4">dk.napp.drawer</module>
-        <module platform="iphone">dk.napp.drawer</module>
+        <module platform="android" version="1.1.5">dk.napp.drawer</module>
+        <module platform="iphone" version="1.2.1">dk.napp.drawer</module>
     </modules>
     <deployment-targets>
         <target device="iphone">false</target>
@@ -64,6 +64,6 @@
         <target device="android">true</target>
         <target device="mobileweb">false</target>
     </deployment-targets>
-    <sdk-version>3.5.1.GA</sdk-version>
+    <sdk-version>4.0.0.GA</sdk-version>
     <property name="appc-app-id" type="string">554e69443466df7318122ad8</property>
 </ti:app>
