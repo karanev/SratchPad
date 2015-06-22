@@ -1,8 +1,0 @@
-"C:/Users/H.P/Documents/Titanium_Studio_Workspace/NoteBook/build/android/gen/android/support/v7/appcompat/R.java"
-"C:/Users/H.P/Documents/Titanium_Studio_Workspace/NoteBook/build/android/gen/com/karan/notebook/ApplicationStylesheet.java"
-"C:/Users/H.P/Documents/Titanium_Studio_Workspace/NoteBook/build/android/gen/com/karan/notebook/AssetCryptImpl.java"
-"C:/Users/H.P/Documents/Titanium_Studio_Workspace/NoteBook/build/android/gen/com/karan/notebook/NotebookActivity.java"
-"C:/Users/H.P/Documents/Titanium_Studio_Workspace/NoteBook/build/android/gen/com/karan/notebook/NotebookAppInfo.java"
-"C:/Users/H.P/Documents/Titanium_Studio_Workspace/NoteBook/build/android/gen/com/karan/notebook/NotebookApplication.java"
-"C:/Users/H.P/Documents/Titanium_Studio_Workspace/NoteBook/build/android/gen/com/karan/notebook/R.java"
-"C:/Users/H.P/Documents/Titanium_Studio_Workspace/NoteBook/build/android/gen/ti/modules/titanium/ui/R.java"
