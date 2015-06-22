@@ -5,8 +5,6 @@ Titanium.UI.setBackgroundColor("white");
 var PENCILTHICKNESS = 10;
 var RUBBERTHICKNESS = 40;
 
-var OSNAME = Ti.Platform.osname;
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Create the menu view on the left which has menu implemented as table
@@ -97,14 +95,10 @@ menuTable.addEventListener("click", function(e) {
     	    break;
    		case 3: //Save
    			drawer.toggleLeftWindow();
-     	    if (OSNAME == "android") {
-     	    	saveDialogAndroid.show();
-     	    } else {
-     	    	saveDialogiOS.show();
-     	    }
+     	    saveDialogAndroid.show();
      	    break;
      	case 4:
-     		alert("Created by Hashtag (Karan)");
+     		alert("Created by Karan Chaudhary");
      		break;
 	}
 });
@@ -117,61 +111,36 @@ var toastImageSaved = Ti.UI.createNotification({
     duration: Ti.UI.NOTIFICATION_DURATION_SHORT
 });
 
-// Creates save dialogs
-if (OSNAME == "android") {
-	var textfield = Ti.UI.createTextField();
-	var saveDialogAndroid = Ti.UI.createAlertDialog({
-	    title: 'Name?',
-	    androidView: textfield,
-	    buttonNames: ['OK', 'Cancel']
-	});
-	saveDialogAndroid.addEventListener('click', function(e) {
-	    if (e.index == 0) {
-	    	var img = paint.toImage().media;
-	    	var _storage = 'file:///storage/emulated/0/';
-	    	var folder = Ti.Filesystem.getFile(_storage, 'Paint It');
-	    	if (!folder.exists()) {
-    			folder.createDirectory();
-			}
-			var filename = textfield.value;
-			var file = Titanium.Filesystem.getFile(folder.resolve(), filename + ".png");
-			if (file.exists()) {
-				
+// Creates save dialog
+var textfield = Ti.UI.createTextField();
+var saveDialogAndroid = Ti.UI.createAlertDialog({
+	title: 'Name?',
+	androidView: textfield,
+	buttonNames: ['OK', 'Cancel']
+});
+saveDialogAndroid.addEventListener('click', function(e) {
+    if (e.index == 0) {
+    	var img = paint.toImage().media;
+    	var _storage = 'file:///storage/emulated/0/';
+    	var folder = Ti.Filesystem.getFile(_storage, 'Paint It');
+    	if (!folder.exists()) {
+   			folder.createDirectory();
+		}
+		var filename = textfield.value;
+		var file = Titanium.Filesystem.getFile(folder.resolve(), filename + ".png");
+		if (file.exists()) {
 			var nameClashDialog = Ti.UI.createAlertDialog({
 				title: "Alert!",
 				text: "Already a Image with same name",
 				buttonNames: ["Overwrite", "Change Name"]
 			});
 			nameClashDialog.show();
-			
-			}
-	    	file.write(img);
-	    	Ti.Media.Android.scanMediaFiles([file.nativePath], ["replace/png".replace("replace", filename)]);
-	    	toastImageSaved.show();
+		}
+    	file.write(img);
+    	Ti.Media.Android.scanMediaFiles([file.nativePath], ["replace/png".replace("replace", filename)]);
+    	toastImageSaved.show();
 	    }
 	});
-} else {
-	var saveDialogiOS = Ti.UI.createAlertDialog({
-    	title: 'Name?',
-    	style: Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
-    	buttonNames: ['OK', 'Cancel']
-	});
-	saveDialogiOS.addEventListener('click', function(e) {
-	    if (e.index == 0){
-	    	var img = paint.toImage().media;
-	    	var folder = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'Paint It');
-	    	if (!folder.exists()){
-    			folder.createDirectory();
-			}
-			var filename = e.text;
-			var file = Titanium.Filesystem.getFile(folder.resolve(), filename);
-	    	file.write(img);
-	    	var imageForGallery = Ti.FileSystem.getFile(folder.resolve(), filename);
-    		Ti.Media.saveToPhotoGallery(imageForGallery);
-    		// some toast like notification in future here if I supported iOS
-	    }
-	});
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
