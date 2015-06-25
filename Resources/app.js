@@ -1,5 +1,10 @@
+// Changes made:
+//   1) Overwrite is completely removed
+//   2) Modified save dialog to include .png in the extension
+
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 Titanium.UI.setBackgroundColor("white");
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 var PENCILTHICKNESS = 10;
@@ -112,17 +117,36 @@ var toastImageSaved = Ti.UI.createNotification({
 });
 
 // Creates save dialog
-var textfield = Ti.UI.createTextField();
+var textFieldAndLabel = Ti.UI.createView({
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL
+});
+var textfield = Ti.UI.createTextField({
+	width: "80%",
+	height: Ti.UI.FILL,
+	left: 0,
+	// The keyboard shows up correctly but doesn't hide with any method
+	// softKeyboardOnFocus: Ti.UI.Android.SOFT_KEYBOARD_SHOW_ON_FOCUS
+});
+textFieldAndLabel.add(textfield);
+textFieldAndLabel.add( Ti.UI.createLabel({
+	width: "20%",
+	height: Ti.UI.FILL,
+	right: 0,
+	text: ".png",
+	textAlign: "center",
+	font: {fontSize: "24dp"}
+}));
 var saveDialogAndroid = Ti.UI.createAlertDialog({
 	title: 'Name?',
-	androidView: textfield,
+	androidView: textFieldAndLabel,
 	buttonNames: ['OK', 'Cancel']
 });
 saveDialogAndroid.addEventListener('click', function(e) {
     if (e.index == 0) {
     	var img = paint.toImage().media;
-    	var _storage = 'file:///storage/emulated/0/';
-    	var folder = Ti.Filesystem.getFile(_storage, 'Paint It');
+    	var _storage = "file:///storage/emulated/0";
+    	var folder = Ti.Filesystem.getFile(_storage, 'Paint It Images');
     	if (!folder.exists()) {
    			folder.createDirectory();
 		}
@@ -130,17 +154,26 @@ saveDialogAndroid.addEventListener('click', function(e) {
 		var file = Titanium.Filesystem.getFile(folder.resolve(), filename + ".png");
 		if (file.exists()) {
 			var nameClashDialog = Ti.UI.createAlertDialog({
-				title: "Alert!",
-				text: "Already a Image with same name",
-				buttonNames: ["Overwrite", "Change Name"]
+				title: "ERROR!",
+				message: "Already a Image with same name",
+				buttonNames: ["Change Name"]
+			});
+			nameClashDialog.addEventListener("click", function(e) {
+				if (e.index == 0) {
+					// change name
+					// Calling this time doesn't blurs the image while saving to gallery
+    				saveDialogAndroid.show();
+				}
 			});
 			nameClashDialog.show();
+		} else {
+			file.write(img);
+			// #Saves to gallery but blurs the image, and its not because of async with callbacks and setTimeout
+			Ti.Media.Android.scanMediaFiles([file.nativePath], ["replace/png".replace("replace", filename)]);
+			toastImageSaved.show();
 		}
-    	file.write(img);
-    	Ti.Media.Android.scanMediaFiles([file.nativePath], ["replace/png".replace("replace", filename)]);
-    	toastImageSaved.show();
-	    }
-	});
+	}
+});
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -148,7 +181,7 @@ saveDialogAndroid.addEventListener('click', function(e) {
 var paintView = Ti.UI.createView({
 	width: Ti.UI.FILL,
 	height: Ti.UI.FILL,
-	backgroundColor: "white"
+	backgroundColor: "white",
 	//url: "paintView.js"
 });
 
@@ -164,7 +197,7 @@ var paint = Paint.createPaintView({
 	strokeColor: "#000",
 	strokeAlpha: 255,
 	strokeWidth: PENCILTHICKNESS,
-	eraseMode: false
+	eraseMode: false,
 });
 
 var selectedTool = Ti.UI.createImageView({
@@ -262,7 +295,7 @@ var drawer = NappDrawer.createDrawer({
 	animationMode: NappDrawer.ANIMATION_NONE,
 	closeDrawerGestureMode: NappDrawer.CLOSE_MODE_MARGIN,
 	openDrawerGestureMode: NappDrawer.OPEN_MODE_NONE,
-	orientationModes: [Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT]
+	orientationModes: [Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT],
 });
 
 drawer.open();

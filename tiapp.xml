@@ -54,8 +54,8 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-        <module platform="android" version="2.0.2">ti.paint</module>
         <module platform="iphone" version="1.2.1">dk.napp.drawer</module>
+        <module platform="android" version="2.0.2">ti.paint</module>
         <module platform="android" version="1.1.4">dk.napp.drawer</module>
     </modules>
     <deployment-targets>
