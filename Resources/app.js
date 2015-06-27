@@ -1,6 +1,6 @@
 // Changes made:
-//   1) Overwrite is completely removed
-//   2) Modified save dialog to include .png in the extension
+//   1) Created a better About Me
+//   2) Now app doesn't close on hitting the back button
 
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 Titanium.UI.setBackgroundColor("white");
@@ -71,6 +71,15 @@ var menuTable = Ti.UI.createTableView({
 	data: rowData
 });
 
+// Dialog box for About Me
+var aboutMeDialog = Ti.UI.createAlertDialog({
+	title: 'About Me:',
+	message: "Made by Karan Chaudhary:\n\nAn undergraduate pursuing" +
+		  " Computer Engineering, who gets a little nervous right" +
+		  "before goes to say Worcestershire sauce.",
+	buttonNames: ['OK']
+});
+
 menuTable.addEventListener("click", function(e) {
 	switch (e.index) {
     	case 0: //Pencil
@@ -103,7 +112,7 @@ menuTable.addEventListener("click", function(e) {
      	    saveDialogAndroid.show();
      	    break;
      	case 4:
-     		alert("Created by Karan Chaudhary");
+     		aboutMeDialog.show();
      		break;
 	}
 });
@@ -295,7 +304,18 @@ var drawer = NappDrawer.createDrawer({
 	animationMode: NappDrawer.ANIMATION_NONE,
 	closeDrawerGestureMode: NappDrawer.CLOSE_MODE_MARGIN,
 	openDrawerGestureMode: NappDrawer.OPEN_MODE_NONE,
-	orientationModes: [Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT],
+	orientationModes: [Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT]
+});
+
+// Prevents the app to close on pressing back button
+drawer.addEventListener("android:back", function(e) {
+    var intent = Ti.Android.createIntent({
+        action : Ti.Android.ACTION_MAIN
+    });
+ 
+    intent.addCategory(Ti.Android.CATEGORY_HOME);
+    Ti.Android.currentActivity.startActivity(intent);
+ 
 });
 
 drawer.open();
