@@ -232,14 +232,57 @@ selectedTool.addEventListener("click", function(e) {
 		thicknessSliderPencil.hide();
 		thicknessSliderRubber.hide();
 		animateSelectedTool("anticlockwise");
+		colorPalette.hide();
 	} else if (paint.eraseMode == false) {
 		thicknessSliderPencil.show();
 		animateSelectedTool("clockwise");
+		colorPalette.show();
 	} else {
 		thicknessSliderRubber.show();
 		animateSelectedTool("clockwise");
+		colorPalette.show();
 	}
 });
+		
+// The color palette goes here		
+var colorPalette = Ti.UI.createView({
+	width: Ti.UI.SIZE,	
+	height: Ti.UI.SIZE,
+	right: "75dp",		
+	top: "15dp",		
+	layout: "horizontal",		
+	visible: false		
+});		
+var colorPicker = require('color_picker');		
+colorPickerWin = colorPicker.createColorPicker({
+	hexColor: "#00f"		
+});		
+colorPickerWin.addEventListener("selectedcolor", function(e) {		
+	paint.strokeColor = '#' + e.color;		
+	color.borderColor = paint.strokeColor;		
+	color.backgroundColor = paint.strokeColor;		
+});		
+var color = Ti.UI.createView({		
+	width: "50dp",		
+	height: "50dp",		
+	borderRadius: "25dp",		
+	borderWidth: "25dp",		
+	borderColor: "#00f",		
+	backgroundColor: "#00f",		
+	colorPicker: false		
+});		
+color.addEventListener("click", function(e) {		
+	paint.strokeColor = e.source.backgroundColor;		
+});		
+color.addEventListener("dblclick", function(e) {		
+	colorPickerWin.open();		
+	color.colorPicker = true;		
+});		
+color.addEventListener("longpress", function(e) {		
+	colorPickerWin.open();		
+	color.colorPicker = true;		
+});		
+colorPalette.add(color);		
 
 var t = Titanium.UI.create2DMatrix();
 t = t.rotate(-90);
@@ -282,6 +325,7 @@ openMenu.addEventListener("click", function(e){
 // Add PaintView to our centerView i.e. paintView
 paintView.add(paint);
 paintView.add(selectedTool); //adding after all so as to make it visible
+paintView.add(colorPalette);
 paintView.add(thicknessSliderRubber);
 paintView.add(thicknessSliderPencil);
 paintView.add(openMenu);
