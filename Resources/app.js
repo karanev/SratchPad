@@ -1,7 +1,3 @@
-// Changes made:
-//   1) Created a better About Me
-//   2) Now app doesn't close on hitting the back button
-
 // this sets the background color of the master UIView (when there are no windows/tab groups on it)
 Titanium.UI.setBackgroundColor("white");
 
@@ -203,7 +199,7 @@ var paint = Paint.createPaintView({
 	width: "100%",
 	height: "100%",
 	backgroundColor: "white",
-	strokeColor: "#000",
+	strokeColor: "#00f",
 	strokeAlpha: 255,
 	strokeWidth: PENCILTHICKNESS,
 	eraseMode: false,
@@ -243,7 +239,7 @@ selectedTool.addEventListener("click", function(e) {
 		colorPalette.show();
 	}
 });
-		
+
 // The color palette goes here		
 var colorPalette = Ti.UI.createView({
 	width: Ti.UI.SIZE,	
